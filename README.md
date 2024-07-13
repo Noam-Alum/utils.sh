@@ -13,6 +13,8 @@ You can place **uc_** variables in the head of your script to configure utils fu
 
 > Each function description includes its **uc_** variables with examples.
 
+* You can download a version that includes only the functions - `utils-min.sh`.
+
 ## ![bash](https://raw.githubusercontent.com/rahul-jha98/README_icons/4d06112f039d3d302017842f696129642a58f6a5/language_and_tools/square/bash/bash-colored.svg) xecho - Extended echo
 
 **xecho** is a utility designed to facilitate color usage in output,<br>
