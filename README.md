@@ -36,7 +36,11 @@ Note that by using curl each time the script runs you'd have to wait for a respo
 
 * You can use a version that includes only the functions - `utils-min.sh`.
 
-Click here to view examples:
+**Simple example of usage:**
+
+![img](examples/password_generator/password_generator.gif)
+
+Click here to view more examples:
 
 [![Button Component](https://readme-components.vercel.app/api?component=button&text=examples)](examples)
 
