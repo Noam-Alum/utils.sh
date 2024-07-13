@@ -1,5 +1,4 @@
 #!/bin/bash
-# Test
 set +H
 function xecho {
   local content="$*"
