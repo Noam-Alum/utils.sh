@@ -135,8 +135,7 @@ function user_input {
   done
 }
 gen_random() {
-  uc_gr_len="$2"
-  test -z "$uc_gr_len" && uc_gr_len=12
+  test -n "$uc_gr_len" && uc_gr_len=12
   gr_opt="$1"
   if [[ "$gr_opt" == "all" ]]; then
     charset="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,'\"!@#$%^&*()-_=+|[]{};:/?.>"
@@ -149,4 +148,21 @@ gen_random() {
     fi
   fi
   tr -dc "$charset" < /dev/urandom | head -c "$uc_gr_len"
+}
+function run {
+  rn_ec=$1
+  rn_verbal="$2"
+  rn_cmd="$3"
+  test -z "$uc_rn_inf_msg" && uc_rn_inf_msg="{{ INFO }} Executed <on_b><bw> {[ rn_cmd ]} </on_b></bw> successfully <big>{{ E-success }}</big>."
+  test -z "$uc_rn_err_msg" && uc_rn_err_msg="{{ ERROR }} Error while executing <on_b><bw> {[ rn_cmd ]} </on_b></bw> {{ E-angry }}\n{{ BR-specialdots }}\n    <bw>Error:</bw>\n{{ BR-specialdots }}\n<on_ir><bw> {[ rn_err ]} </bw></on_ir>\n{{ BR-specialdots }}"
+  rn_err="$(eval "$rn_cmd 2>&1 $rn_mode")"
+  rn_res="$?"
+  uc_rn_err_msg="${uc_rn_err_msg//"{[ rn_err ]}"/"$rn_err"}"
+  uc_rn_err_msg="${uc_rn_err_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
+  uc_rn_inf_msg="${uc_rn_inf_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
+  if [ $rn_res -ne $rn_ec ]; then
+    xecho "$uc_rn_err_msg"
+  elif [ "$rn_verbal" == "info" ]; then
+    xecho "$uc_rn_inf_msg"
+  fi
 }
