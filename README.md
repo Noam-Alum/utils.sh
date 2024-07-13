@@ -33,6 +33,10 @@ Click here to view examples:
 
 [![Button Component](https://readme-components.vercel.app/api?component=button&text=examples)](examples)
 
+---
+
+# Functions
+
 ## ![bash](https://raw.githubusercontent.com/rahul-jha98/README_icons/4d06112f039d3d302017842f696129642a58f6a5/language_and_tools/square/bash/bash-colored.svg) xecho - Extended echo
 
 **xecho** is a utility designed to facilitate color usage in output,<br>
