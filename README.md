@@ -2,18 +2,26 @@
 
 ![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)
 
-
 A collection of functions to make scripting in bash easier.<br>
 You can place **uc_** variables in the head of your script to configure utils functions for your liking.
 
-### uc_ variables
-
-| **uc_ variable** | **function** | **description**                     |
-|------------------|--------------|-------------------------------------|
-| `uc_ifc_posfix`  | ifcontinue   | Change default posfix (*[yes/no]*). |
-| `uc_gr_len`      | gen_random   | Change default length (*12*).       |
+| **uc_ variable** | **function** | **description**                       |
+|------------------|--------------|---------------------------------------|
+| uc_ifc_posfix    | ifcontinue   | Change default posfix (*[yes/no]*).   |
+| uc_gr_len        | gen_random   | Change default length (*12*).         |
+| uc_rn_err_msg    | run          | Change the structure of the error msg.|
+| uc_rn_inf_msg    | run          | Change the structure of the info msg. | 
 
 > Each function description includes its **uc_** variables with examples.
+
+If a uc_ variable has dynamically changing parts, you'd have to use **placeholders**, placeholders are
+called using {[ name ]}:
+
+| **placeholder**  | **function** | **description**                                              |
+|------------------|--------------|--------------------------------------------------------------|
+| {[ rn_cmd ]}     | run          | The command executed by the run function.                    |
+| {[ rn_err ]}     | run          | The error returned after executing a given command with run. |
+
 ### How to use
 
 You either download the script to your computer, then source it from there:
@@ -226,3 +234,67 @@ For example:
 ```bash
 uc_gr_len=8
 ```
+
+## ![bash](https://raw.githubusercontent.com/rahul-jha98/README_icons/4d06112f039d3d302017842f696129642a58f6a5/language_and_tools/square/bash/bash-colored.svg) run - run commands in an informative way
+
+The **run** function is intended to execute commands with both informative clarity
+and stylish presentation.
+
+**Usage:**
+```bash
+run <wanted-exit-code> "<info/notinfo>" "<cmd>"
+```
+- `<wanted-exit-code>`: An integer, usually 0.
+- `<info/notinfo>`: Wheter or not to inform if a commmand has been executed.
+  ```bash
+  run 0 "info" "cat exists.txt"
+  ```
+  Would return:<br>
+  [INFO] Executed  cat exists.txt  successfully ✔.<br>
+  If I used *noinfo* nothig would have been returned.
+- `<cmd>`: The command you want to execute.
+
+**For example:**
+```
+run 0 "info" cat does-not-exists.txt 
+```
+Would return:
+
+```txt
+[ERROR] Error while executing  cat does-not-exists.txt  ಠ_ರೃ
+✦•┈๑⋅⋯ ⋯⋅๑┈•✦
+   Error:
+✦•┈๑⋅⋯ ⋯⋅๑┈•✦
+cat: does-not-exists.txt: No such file or directory
+✦•┈๑⋅⋯ ⋯⋅๑┈•✦
+```
+
+### uc_ variables
+
+#### Placeholders
+
+| Placeholder    | Description                                                            |
+| -------------- | ---------------------------------------------------------------------- |
+| `{[ rn_cmd ]}` | The command executed by the run function.                              |
+| `{[ rn_err ]}` | The error returned after executing a given command with run            |
+
+- **uc_rn_inf_msg:** Change the info message stracture.<br>
+  ```bash
+  uc_rn_inf_msg="{{ B-arrow }} Smootly executed {[ rn_cmd ]} {{ E-smile }}"
+  ```
+  Now when info messages are used they would look like so:
+  ```txt
+  ➣ Smoothly executed {[ rn_cmd ]} ʘ‿ʘ
+  ```
+  {[ rn_cmd ]} being the command you've executed.
+  
+- **uc_rn_err_msg:** Change the error message stracture.<br>
+  ```bash
+  uc_rn_err_msg="{{ B-arrow }} Ops! error while executing {[ rn_cmd ]} {{ E-sad }}\n{[ rn_err ]}"
+  ```
+  Now when error messages are used they would look like so:
+  ```txt
+  ➣ Ops! error while executing {[ rn_cmd ]} ◕︵◕
+  {[ rn_err ]}
+  ```
+  {[ rn_cmd ]} being the command you've executed, and {[ rn_err ]} being the error returned.
