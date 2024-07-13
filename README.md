@@ -6,6 +6,8 @@
 A collection of functions to make scripting in bash easier.<br>
 You can place **uc_** variables in the head of your script to configure utils functions for your liking.
 
+### uc_ variables
+
 | **uc_ variable** | **function** | **description**                     |
 |------------------|--------------|-------------------------------------|
 | `uc_ifc_posfix`  | ifcontinue   | Change default posfix (*[yes/no]*). |
@@ -13,7 +15,23 @@ You can place **uc_** variables in the head of your script to configure utils fu
 
 > Each function description includes its **uc_** variables with examples.
 
-* You can download a version that includes only the functions - `utils-min.sh`.
+### How to use
+
+You either download the script to your computer, then source it from there:
+```bash
+source /path/to/utils.sh
+```
+Or source it using `curl` and the raw link from this GitHub repository:
+```bash
+source <(curl -Ls "https://raw.githubusercontent.com/Noam-Alum/utils.sh/main/utils.sh")
+```
+Note that by using curl each time the script runs you'd have to wait for a response with the functions.
+
+* You can use a version that includes only the functions - `utils-min.sh`.
+
+Click here to view examples:
+
+[![Button Component](https://readme-components.vercel.app/api?component=button&text=examples)](examples)
 
 ## ![bash](https://raw.githubusercontent.com/rahul-jha98/README_icons/4d06112f039d3d302017842f696129642a58f6a5/language_and_tools/square/bash/bash-colored.svg) xecho - Extended echo
 
