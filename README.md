@@ -369,6 +369,7 @@ easy_curl <option> <sub-option> <URL>
   - **type**: Retrieve the content type of the resource at the specified URL.
   - **errmsg**: Retrieve the error message from the attempted operation.
   - **ec**: Retrieve the exit code from the curl operation.
+  - **hc**: Retrieve the http code from the response from the server.
 
 ### Examples
 
@@ -385,4 +386,9 @@ easy_curl <option> <sub-option> <URL>
 3. Retrieve exit code:
    ```bash
    easy_curl p ec http://example.com
+   ```
+   
+4. Retrieve http code:
+   ```bash
+   easy_curl p hc http://example.com
    ```
