@@ -302,3 +302,87 @@ cat: does-not-exists.txt: No such file or directory
   {[ rn_err ]}
   ```
   {[ rn_cmd ]} being the command you've executed, and {[ rn_err ]} being the error returned.
+
+## ![bash](https://raw.githubusercontent.com/rahul-jha98/README_icons/4d06112f039d3d302017842f696129642a58f6a5/language_and_tools/square/bash/bash-colored.svg) parser
+
+The `parser` function processes text using different modes and options specified by the user.
+
+**Usage:**
+```bash
+parser <mode> <submode> [options...]
+```
+
+### Modes and Submodes:
+
+1. **Mode `l` (Line-based operations):**
+   - **Submode `c` (Column extraction):**
+     ```bash
+     parser l c <column_number>
+     ```
+    Extracts the specified column from each line of input. (**NF** for final column)
+
+   - **Submode `b` (Block extraction):**
+    ```bash
+    parser l b <start_pattern> <end_pattern>
+    ```
+    Extracts lines between the `start_pattern` and `end_pattern`.
+
+2. **Mode `b` (Block-based operations):**
+   - **Submode `w` (Within block extraction):**
+     ```bash
+     parser b w <start_pattern> <end_pattern>
+     ```
+     Extracts lines within blocks defined by `start_pattern` and `end_pattern`.
+
+   - **Submode `n` (Line number extraction):**
+    ```bash
+    parser b n <line_number>
+    ```
+    Extracts the line specified by `line_number`.
+
+### Examples:
+
+1. **Extracting a specific column (`l c` mode):**
+   ```bash
+   parser l c 2
+   ```
+   This will extract the second column from each line of input.
+
+2. **Extracting lines within blocks (`b w` mode):**
+   ```bash
+   parser b w "start_pattern" "end_pattern"
+   ```
+   This will extract lines within blocks defined by `start_pattern` and `end_pattern`.
+
+## ![bash](https://raw.githubusercontent.com/rahul-jha98/README_icons/4d06112f039d3d302017842f696129642a58f6a5/language_and_tools/square/bash/bash-colored.svg) easy_curl
+
+The easy_curl function provides simplified functionality to retrieve specific information from a URL using curl.
+
+**Usage:**
+```bash
+easy_curl <option> <sub-option> <URL>
+```
+
+### Options
+
+- **p**: Perform a curl operation with the specified sub-option.
+  - **type**: Retrieve the content type of the resource at the specified URL.
+  - **errmsg**: Retrieve the error message from the attempted operation.
+  - **ec**: Retrieve the exit code from the curl operation.
+
+### Examples
+
+1. Retrieve content type:
+   ```bash
+   easy_curl p type http://example.com
+   ```
+
+2. Retrieve error message:
+   ```bash
+   easy_curl p errmsg http://example.com
+   ```
+
+3. Retrieve exit code:
+   ```bash
+   easy_curl p ec http://example.com
+   ```
