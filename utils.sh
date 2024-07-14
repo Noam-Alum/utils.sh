@@ -12,10 +12,20 @@ set +H
 # You can place **uc_** variables in the head of your script to configure utils functions for your liking.
 # Each function description includes its **uc_** variables.
 #
-# | **uc_ variable** | **function** | **description**                     |
-# |------------------|--------------|-------------------------------------|
-# | uc_ifc_posfix    | ifcontinue   | Change default posfix (*[yes/no]*). |
-# | uc_gr_len        | gen_random   | Change default length (*12*).       |
+# | **uc_ variable** | **function** | **description**                       |
+# |------------------|--------------|---------------------------------------|
+# | uc_ifc_posfix    | ifcontinue   | Change default posfix (*[yes/no]*).   |
+# | uc_gr_len        | gen_random   | Change default length (*12*).         |
+# | uc_rn_err_msg    | run          | Change the structure of the error msg.|
+# | uc_rn_inf_msg    | run          | Change the structure of the info msg. | 
+#
+# If a uc_ variable has dynamically changing parts, you'd have to use **placeholders**, placeholders are
+# called using {[ name ]}:
+#
+# | placeholder    | Description                                                            |
+# | -------------- | ---------------------------------------------------------------------- |
+# | `{[ rn_cmd ]}` | The command executed by the run function.                              |
+# | `{[ rn_err ]}` | The error returned after executing a given command with run            |
 #
 ## xecho - Extended echo
 # :  **xecho** is a utility designed to facilitate color usage output,
@@ -355,8 +365,7 @@ function user_input {
 # :
 
 gen_random() {
-  uc_gr_len="$2"
-  test -z "$uc_gr_len" && uc_gr_len=12
+  test -n "$uc_gr_len" && uc_gr_len=12
   gr_opt="$1"
 
   if [[ "$gr_opt" == "all" ]]; then
@@ -371,4 +380,224 @@ gen_random() {
   fi
 
   tr -dc "$charset" < /dev/urandom | head -c "$uc_gr_len"
+}
+
+## run - run commands in an informative way
+# : 
+# : The **run** function is intended to execute commands with both informative clarity
+# : and stylish presentation.
+# : 
+# : **Usage:**
+# : ```bash
+# : run <wanted-exit-code> "<info/notinfo>" "<cmd>"
+# : ```
+# : - `<wanted-exit-code>`: An integer, usually 0.
+# : - `<info/notinfo>`: Wheter or not to inform if a commmand has been executed.
+# :   ```bash
+# :   run 0 "info" "cat exists.txt"
+# :   ```
+# :   Would return:<br>
+# :   [INFO] Executed  cat exists.txt  successfully ✔.<br>
+# :   If I used *noinfo* nothig would have been returned.
+# : - `<cmd>`: The command you want to execute.
+# : 
+# : **For example:**
+# : ```
+# : run 0 "info" cat does-not-exists.txt 
+# : ```
+# : Would return:
+# : 
+# : [ERROR] Error while executing  cat does-not-exists.txt  ಠ_ರೃ
+# : ✦•┈๑⋅⋯ ⋯⋅๑┈•✦
+# :    Error:
+# : ✦•┈๑⋅⋯ ⋯⋅๑┈•✦
+# : cat: does-not-exists.txt: No such file or directory
+# : ✦•┈๑⋅⋯ ⋯⋅๑┈•✦
+# :
+# : ## uc_ variables
+# :
+# : ### Placeholders
+# :
+# : | Placeholder    | Description                                                            |
+# : | -------------- | ---------------------------------------------------------------------- |
+# : | `{[ rn_cmd ]}` | The command executed by the run function.                              |
+# : | `{[ rn_err ]}` | The error returned after executing a given command with run            |
+# :
+# : - **uc_rn_inf_msg:** Change the info message stracture.<br>
+# :   ```bash
+# :   uc_rn_inf_msg="{{ B-arrow }} Smootly executed {[ rn_cmd ]} {{ E-smile }}"
+# :   ```
+# :   Now when info messages are used they would look like so:
+# :   ```txt
+# :   ➣ Smoothly executed {[ rn_cmd ]} ʘ‿ʘ
+# :   ```
+# :   {[ rn_cmd ]} being the command you've executed.
+# :   
+# : - **uc_rn_err_msg:** Change the error message stracture.<br>
+# :   ```bash
+# :   uc_rn_err_msg="{{ B-arrow }} Ops! error while executing {[ rn_cmd ]} {{ E-sad }}\n{[ rn_err ]}"
+# :   ```
+# :   Now when error messages are used they would look like so:
+# :   ```txt
+# :   ➣ Ops! error while executing {[ rn_cmd ]} ◕︵◕
+# :   {[ rn_err ]}
+# :   ```
+# :   {[ rn_cmd ]} being the command you've executed, and {[ rn_err ]} being the error returned.
+
+function run {
+  rn_ec=$1
+  rn_verbal="$2"
+  rn_cmd="$3"
+
+  test -z "$uc_rn_inf_msg" && uc_rn_inf_msg="{{ INFO }} Executed <on_b><bw> {[ rn_cmd ]} </on_b></bw> successfully <big>{{ E-success }}</big>."
+  test -z "$uc_rn_err_msg" && uc_rn_err_msg="{{ ERROR }} Error while executing <on_b><bw> {[ rn_cmd ]} </on_b></bw> {{ E-angry }}\n{{ BR-specialdots }}\n    <bw>Error:</bw>\n{{ BR-specialdots }}\n<on_ir><bw> {[ rn_err ]} </bw></on_ir>\n{{ BR-specialdots }}"
+
+  rn_err="$(eval "$rn_cmd 2>&1 $rn_mode")"
+  rn_res="$?"
+
+  uc_rn_err_msg="${uc_rn_err_msg//"{[ rn_err ]}"/"$rn_err"}"
+  uc_rn_err_msg="${uc_rn_err_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
+  uc_rn_inf_msg="${uc_rn_inf_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
+
+  if [ $rn_res -ne $rn_ec ]; then
+    xecho "$uc_rn_err_msg"
+  elif [ "$rn_verbal" == "info" ]; then
+    xecho "$uc_rn_inf_msg"
+  fi
+}
+
+## parser
+# :
+# : The `parser` function processes text using different modes and options specified by the user.
+# :
+# : **Usage:**
+# : ```bash
+# : parser <mode> <submode> [options...]
+# : ```
+# :
+# : ## Modes and Submodes:
+# :
+# : 1. **Mode `l` (Line-based operations):**
+# :    - **Submode `c` (Column extraction):**
+# :      ```bash
+# :      parser l c <column_number>
+# :      ```
+# :     Extracts the specified column from each line of input. (**NF** for final column)
+# :
+# :    - **Submode `b` (Block extraction):**
+# :     ```bash
+# :     parser l b <start_pattern> <end_pattern>
+# :     ```
+# :     Extracts lines between the `start_pattern` and `end_pattern`.
+# :
+# : 2. **Mode `b` (Block-based operations):**
+# :    - **Submode `w` (Within block extraction):**
+# :      ```bash
+# :      parser b w <start_pattern> <end_pattern>
+# :      ```
+# :      Extracts lines within blocks defined by `start_pattern` and `end_pattern`.
+# :
+# :    - **Submode `n` (Line number extraction):**
+# :     ```bash
+# :     parser b n <line_number>
+# :     ```
+# :     Extracts the line specified by `line_number`.
+# :
+# : ## Examples:
+# :
+# : 1. **Extracting a specific column (`l c` mode):**
+# :    ```bash
+# :    parser l c 2
+# :    ```
+# :    This will extract the second column from each line of input.
+# :
+# : 2. **Extracting lines within blocks (`b w` mode):**
+# :    ```bash
+# :    parser b w "start_pattern" "end_pattern"
+# :    ```
+# :    This will extract lines within blocks defined by `start_pattern` and `end_pattern`.
+
+function parser {
+  local pr_mode="$1"
+  
+  case $pr_mode in
+    l)
+      case $2 in
+        c)
+          local pr_line_column="$3"
+          eval awk {\'print \$$pr_line_column\'}
+          ;;
+        b)
+          local pr_line_fw="$3"
+          local pr_line_sw="$4"
+          awk -v start="$pr_line_fw" -v end="$pr_line_sw" '$0 ~ start {flag=1; next} $0 ~ end {flag=0} flag'
+          ;;
+      esac
+      ;;
+    b)
+      case $2 in
+        w)
+          local pr_between_fs="$2"
+          local pr_between_ss="$3"
+          awk -v start="$pr_between_fs" -v end="$pr_between_ss" '$0 ~ start, $0 ~ end { if (!($0 ~ start) && !($0 ~ end)) print }'
+          ;;
+        n)
+          local pr_line_number="$3"
+          awk "NR == ${pr_line_number}"
+          ;;
+      esac
+      ;;
+  esac
+}
+
+## easy_curl
+# :
+# : The easy_curl function provides simplified functionality to retrieve specific information from a URL using curl.
+# :
+# : **Usage:**
+# : ```bash
+# : easy_curl <option> <sub-option> <URL>
+# : ```
+# : 
+# : ## Options
+# : 
+# : - **p**: Perform a curl operation with the specified sub-option.
+# :   - **type**: Retrieve the content type of the resource at the specified URL.
+# :   - **errmsg**: Retrieve the error message from the attempted operation.
+# :   - **ec**: Retrieve the exit code from the curl operation.
+# : 
+# : ## Examples
+# : 
+# : 1. Retrieve content type:
+# :    ```bash
+# :    easy_curl p type http://example.com
+# :    ```
+# : 
+# : 2. Retrieve error message:
+# :    ```bash
+# :    easy_curl p errmsg http://example.com
+# :    ```
+# : 
+# : 3. Retrieve exit code:
+# :    ```bash
+# :    easy_curl p ec http://example.com
+# :    ```
+
+function easy_curl {
+  ec_url="$3"
+  case $1 in
+    p)
+      case $2 in
+        type)
+          curl --max-time 3 -s -I -o /dev/null -w "%{content_type}" "$ec_url"
+          ;;
+        errmsg)
+          curl --max-time 3 -s -I -o /dev/null -w "%{errormsg}" "$ec_url"
+          ;;
+        ec)
+          curl --max-time 3 -s -I -o /dev/null -w "%{exitcode}" "$ec_url"
+          ;;
+      esac
+      ;;
+  esac
 }
