@@ -166,3 +166,52 @@ function run {
     xecho "$uc_rn_inf_msg"
   fi
 }
+function parser {
+  local pr_mode="$1"
+  case $pr_mode in
+    l)
+      case $2 in
+        c)
+          local pr_line_column="$3"
+          eval awk {\'print \$$pr_line_column\'}
+          ;;
+        b)
+          local pr_line_fw="$3"
+          local pr_line_sw="$4"
+          awk -v start="$pr_line_fw" -v end="$pr_line_sw" '$0 ~ start {flag=1; next} $0 ~ end {flag=0} flag'
+          ;;
+      esac
+      ;;
+    b)
+      case $2 in
+        w)
+          local pr_between_fs="$2"
+          local pr_between_ss="$3"
+          awk -v start="$pr_between_fs" -v end="$pr_between_ss" '$0 ~ start, $0 ~ end { if (!($0 ~ start) && !($0 ~ end)) print }'
+          ;;
+        n)
+          local pr_line_number="$3"
+          awk "NR == ${pr_line_number}"
+          ;;
+      esac
+      ;;
+  esac
+}
+function easy_curl {
+  ec_url="$3"
+  case $1 in
+    p)
+      case $2 in
+        type)
+          curl --max-time 3 -s -I -o /dev/null -w "%{content_type}" "$ec_url"
+          ;;
+        errmsg)
+          curl --max-time 3 -s -I -o /dev/null -w "%{errormsg}" "$ec_url"
+          ;;
+        ec)
+          curl --max-time 3 -s -I -o /dev/null -w "%{exitcode}" "$ec_url"
+          ;;
+      esac
+      ;;
+  esac
+}
