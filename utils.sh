@@ -452,7 +452,7 @@ function run {
   test -z "$uc_rn_inf_msg" && uc_rn_inf_msg="{{ INFO }} Executed <on_b><bw> {[ rn_cmd ]} </on_b></bw> successfully <big>{{ E-success }}</big>."
   test -z "$uc_rn_err_msg" && uc_rn_err_msg="{{ ERROR }} Error while executing <on_b><bw> {[ rn_cmd ]} </on_b></bw> {{ E-angry }}\n{{ BR-specialdots }}\n    <bw>Error:</bw>\n{{ BR-specialdots }}\n<on_ir><bw> {[ rn_err ]} </bw></on_ir>\n{{ BR-specialdots }}"
 
-  rn_err="$(eval "$rn_cmd 2>&1 $rn_mode")"
+  rn_err="$(eval "$rn_cmd 2>&1")"
   rn_res="$?"
 
   uc_rn_err_msg="${uc_rn_err_msg//"{[ rn_err ]}"/"$rn_err"}"
@@ -596,6 +596,9 @@ function easy_curl {
           ;;
         ec)
           curl --max-time 3 -s -I -o /dev/null -w "%{exitcode}" "$ec_url"
+          ;;
+        hc)
+          curl --max-time 3 -s -I -o /dev/null -w "%{http_code}" "$ec_url"
           ;;
       esac
       ;;
