@@ -149,25 +149,8 @@ gen_random() {
   fi
   tr -dc "$charset" < /dev/urandom | head -c "$uc_gr_len"
 }
-function run {
-  rn_ec=$1
-  rn_verbal="$2"
-  rn_cmd="$3"
-  test -z "$uc_rn_inf_msg" && uc_rn_inf_msg="{{ INFO }} Executed <on_b><bw> {[ rn_cmd ]} </on_b></bw> successfully <big>{{ E-success }}</big>."
-  test -z "$uc_rn_err_msg" && uc_rn_err_msg="{{ ERROR }} Error while executing <on_b><bw> {[ rn_cmd ]} </on_b></bw> {{ E-angry }}\n{{ BR-specialdots }}\n    <bw>Error:</bw>\n{{ BR-specialdots }}\n<on_ir><bw> {[ rn_err ]} </bw></on_ir>\n{{ BR-specialdots }}"
-  rn_err="$(eval "$rn_cmd 2>&1")"
-  rn_res="$?"
-  uc_rn_err_msg="${uc_rn_err_msg//"{[ rn_err ]}"/"$rn_err"}"
-  uc_rn_err_msg="${uc_rn_err_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
-  uc_rn_inf_msg="${uc_rn_inf_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
-  if [ $rn_res -ne $rn_ec ]; then
-    xecho "$uc_rn_err_msg"
-  elif [ "$rn_verbal" == "info" ]; then
-    xecho "$uc_rn_inf_msg"
-  fi
-}
 function parser {
-  local pr_mode="$1"
+  local pr_mode="$1" 
   case $pr_mode in
     l)
       case $2 in
@@ -184,11 +167,6 @@ function parser {
       ;;
     b)
       case $2 in
-        w)
-          local pr_between_fs="$2"
-          local pr_between_ss="$3"
-          awk -v start="$pr_between_fs" -v end="$pr_between_ss" '$0 ~ start, $0 ~ end { if (!($0 ~ start) && !($0 ~ end)) print }'
-          ;;
         n)
           local pr_line_number="$3"
           awk "NR == ${pr_line_number}"
@@ -197,8 +175,27 @@ function parser {
       ;;
   esac
 }
+function run {
+  rn_ec=$1
+  rn_verbal="$2"
+  rn_cmd="$3"
+  test -z "$uc_rn_inf_msg" && uc_rn_inf_msg="{{ INFO }} Executed <on_b><bw> {[ rn_cmd ]} </on_b></bw> successfully <big>{{ E-success }}</big>."
+  test -z "$uc_rn_err_msg" && uc_rn_err_msg="{{ ERROR }} Error while executing <on_b><bw> {[ rn_cmd ]} </on_b></bw> {{ E-angry }}\n{{ BR-specialdots }}\n    <bw>Error:</bw>\n{{ BR-specialdots }}\n<on_ir><bw> {[ rn_err ]} </bw></on_ir>\n{{ BR-specialdots }}"
+  rn_err="$(eval "$rn_cmd 2>&1")"
+  rn_res="$?"
+  test $(wc -l <<< "$rn_cmd") -gt 1 && rn_cmd="$(parser b n 1 <<< "$rn_cmd") ... etc"
+  uc_rn_err_msg="${uc_rn_err_msg//"{[ rn_err ]}"/"$rn_err"}"
+  uc_rn_err_msg="${uc_rn_err_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
+  uc_rn_inf_msg="${uc_rn_inf_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
+  if [ $rn_res -ne $rn_ec ]; then
+    xecho "$uc_rn_err_msg"
+  elif [ "$rn_verbal" == "info" ]; then
+    xecho "$uc_rn_inf_msg"
+  fi
+}
 function easy_curl {
   ec_url="$3"
+  curl_v="$(curl -V | grep -o 'curl [0-9.]*' | cut -d' ' -f2 | tr -d '.')"
   case $1 in
     p)
       case $2 in
@@ -206,10 +203,19 @@ function easy_curl {
           curl --max-time 3 -s -I -o /dev/null -w "%{content_type}" "$ec_url"
           ;;
         errmsg)
-          curl --max-time 3 -s -I -o /dev/null -w "%{errormsg}" "$ec_url"
+          if [[ $curl_v -ge 7750 ]]; then
+            curl --max-time 3 -s -I -o /dev/null -w "%{errormsg}" "$ec_url"
+          else
+            "curl version does not support this feature (added in 7.75.0)."
+          fi
           ;;
         ec)
-          curl --max-time 3 -s -I -o /dev/null -w "%{exitcode}" "$ec_url"
+          if [[ $curl_v -ge 7750 ]]; then
+            curl --max-time 3 -s -I -o /dev/null -w "%{exitcode}" "$ec_url"
+          else
+            curl --max-time 3 -s -I -o /dev/null "$ec_url"
+            echo "$?"
+          fi
           ;;
         hc)
           curl --max-time 3 -s -I -o /dev/null -w "%{http_code}" "$ec_url"
