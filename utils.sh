@@ -382,6 +382,73 @@ gen_random() {
   tr -dc "$charset" < /dev/urandom | head -c "$uc_gr_len"
 }
 
+## parser
+# :
+# : The `parser` function processes text using different modes and options specified by the user.
+# :
+# : **Usage:**
+# : ```bash
+# : parser <mode> <submode> [options...]
+# : ```
+# :
+# : ## Modes and Submodes:
+# :
+# : 1. **Mode `l` (Line-based operations):**
+# :    - **Submode `c` (Column extraction):**
+# :      ```bash
+# :      parser l c <column_number>
+# :      ```
+# :     Extracts the specified column from each line of input. (**NF** for final column)
+# :
+# :    - **Submode `b` (Block extraction):**
+# :     ```bash
+# :     parser l b <start_pattern> <end_pattern>
+# :     ```
+# :     Extracts lines between the `start_pattern` and `end_pattern`.
+# :
+# : 2. **Mode `b` (Block-based operations):**
+# :    - **Submode `n` (Line number extraction):**
+# :     ```bash
+# :     parser b n <line_number>
+# :     ```
+# :     Extracts the line specified by `line_number`.
+# :
+# : ## Examples:
+# :
+# : 1. **Extracting a specific column (`l c` mode):**
+# :    ```bash
+# :    parser l c 2
+# :    ```
+# :    This will extract the second column from each line of input.
+
+function parser {
+  local pr_mode="$1"
+  
+  case $pr_mode in
+    l)
+      case $2 in
+        c)
+          local pr_line_column="$3"
+          eval awk {\'print \$$pr_line_column\'}
+          ;;
+        b)
+          local pr_line_fw="$3"
+          local pr_line_sw="$4"
+          awk -v start="$pr_line_fw" -v end="$pr_line_sw" '$0 ~ start {flag=1; next} $0 ~ end {flag=0} flag'
+          ;;
+      esac
+      ;;
+    b)
+      case $2 in
+        n)
+          local pr_line_number="$3"
+          awk "NR == ${pr_line_number}"
+          ;;
+      esac
+      ;;
+  esac
+}
+
 ## run - run commands in an informative way
 # : 
 # : The **run** function is intended to execute commands with both informative clarity
@@ -455,6 +522,8 @@ function run {
   rn_err="$(eval "$rn_cmd 2>&1")"
   rn_res="$?"
 
+  test $(wc -l <<< "$rn_cmd") -gt 1 && rn_cmd="$(parser b n 1 <<< "$rn_cmd") ... etc"
+
   uc_rn_err_msg="${uc_rn_err_msg//"{[ rn_err ]}"/"$rn_err"}"
   uc_rn_err_msg="${uc_rn_err_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
   uc_rn_inf_msg="${uc_rn_inf_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
@@ -464,90 +533,6 @@ function run {
   elif [ "$rn_verbal" == "info" ]; then
     xecho "$uc_rn_inf_msg"
   fi
-}
-
-## parser
-# :
-# : The `parser` function processes text using different modes and options specified by the user.
-# :
-# : **Usage:**
-# : ```bash
-# : parser <mode> <submode> [options...]
-# : ```
-# :
-# : ## Modes and Submodes:
-# :
-# : 1. **Mode `l` (Line-based operations):**
-# :    - **Submode `c` (Column extraction):**
-# :      ```bash
-# :      parser l c <column_number>
-# :      ```
-# :     Extracts the specified column from each line of input. (**NF** for final column)
-# :
-# :    - **Submode `b` (Block extraction):**
-# :     ```bash
-# :     parser l b <start_pattern> <end_pattern>
-# :     ```
-# :     Extracts lines between the `start_pattern` and `end_pattern`.
-# :
-# : 2. **Mode `b` (Block-based operations):**
-# :    - **Submode `w` (Within block extraction):**
-# :      ```bash
-# :      parser b w <start_pattern> <end_pattern>
-# :      ```
-# :      Extracts lines within blocks defined by `start_pattern` and `end_pattern`.
-# :
-# :    - **Submode `n` (Line number extraction):**
-# :     ```bash
-# :     parser b n <line_number>
-# :     ```
-# :     Extracts the line specified by `line_number`.
-# :
-# : ## Examples:
-# :
-# : 1. **Extracting a specific column (`l c` mode):**
-# :    ```bash
-# :    parser l c 2
-# :    ```
-# :    This will extract the second column from each line of input.
-# :
-# : 2. **Extracting lines within blocks (`b w` mode):**
-# :    ```bash
-# :    parser b w "start_pattern" "end_pattern"
-# :    ```
-# :    This will extract lines within blocks defined by `start_pattern` and `end_pattern`.
-
-function parser {
-  local pr_mode="$1"
-  
-  case $pr_mode in
-    l)
-      case $2 in
-        c)
-          local pr_line_column="$3"
-          eval awk {\'print \$$pr_line_column\'}
-          ;;
-        b)
-          local pr_line_fw="$3"
-          local pr_line_sw="$4"
-          awk -v start="$pr_line_fw" -v end="$pr_line_sw" '$0 ~ start {flag=1; next} $0 ~ end {flag=0} flag'
-          ;;
-      esac
-      ;;
-    b)
-      case $2 in
-        w)
-          local pr_between_fs="$2"
-          local pr_between_ss="$3"
-          awk -v start="$pr_between_fs" -v end="$pr_between_ss" '$0 ~ start, $0 ~ end { if (!($0 ~ start) && !($0 ~ end)) print }'
-          ;;
-        n)
-          local pr_line_number="$3"
-          awk "NR == ${pr_line_number}"
-          ;;
-      esac
-      ;;
-  esac
 }
 
 ## easy_curl
@@ -590,6 +575,7 @@ function parser {
 
 function easy_curl {
   ec_url="$3"
+  curl_v="$(curl -V | grep -o 'curl [0-9.]*' | cut -d' ' -f2 | tr -d '.')"
   case $1 in
     p)
       case $2 in
@@ -597,10 +583,19 @@ function easy_curl {
           curl --max-time 3 -s -I -o /dev/null -w "%{content_type}" "$ec_url"
           ;;
         errmsg)
-          curl --max-time 3 -s -I -o /dev/null -w "%{errormsg}" "$ec_url"
+          if [[ $curl_v -ge 7750 ]]; then
+            curl --max-time 3 -s -I -o /dev/null -w "%{errormsg}" "$ec_url"
+          else
+            "curl version does not support this feature (added in 7.75.0)."
+          fi
           ;;
         ec)
-          curl --max-time 3 -s -I -o /dev/null -w "%{exitcode}" "$ec_url"
+          if [[ $curl_v -ge 7750 ]]; then
+            curl --max-time 3 -s -I -o /dev/null -w "%{exitcode}" "$ec_url"
+          else
+            curl --max-time 3 -s -I -o /dev/null "$ec_url"
+            echo "$?"
+          fi
           ;;
         hc)
           curl --max-time 3 -s -I -o /dev/null -w "%{http_code}" "$ec_url"
