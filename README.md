@@ -348,12 +348,6 @@ parser <mode> <submode> [options...]
    ```
    This will extract the second column from each line of input.
 
-2. **Extracting lines within blocks (`b w` mode):**
-   ```bash
-   parser b w "start_pattern" "end_pattern"
-   ```
-   This will extract lines within blocks defined by `start_pattern` and `end_pattern`.
-
 ## ![bash](https://raw.githubusercontent.com/rahul-jha98/README_icons/4d06112f039d3d302017842f696129642a58f6a5/language_and_tools/square/bash/bash-colored.svg) easy_curl
 
 The easy_curl function provides simplified functionality to retrieve specific information from a URL using curl.
