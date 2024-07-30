@@ -94,7 +94,7 @@ offering a variety of shortcodes for easy integration into your text.
 | **Text bullets:**    |                                 |
 | {{ B-dot }}          | •                               |
 | {{ B-arrow }}        | ➣                               |
-| {{ B-dimond }}       | ◈                               |
+| {{ B-diamond }}       | ◈                               |
 
 ### Tags:
 | Color                                 | Tag        | Example                 |
