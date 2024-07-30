@@ -72,7 +72,7 @@ set +H
 # :  | **Text bullets:**    |                                 |
 # :  | {{ B-dot }}          | •                               |
 # :  | {{ B-arrow }}        | ➣                               |
-# :  | {{ B-dimond }}       | ◈                               |
+# :  | {{ B-diamond }}       | ◈                               |
 # :  
 # :  ## Tags:
 # :  | Color                                 | Tag        | Example                 |
@@ -167,7 +167,7 @@ function xecho {
     ["{{ BR-music }}"]="01:43 ━━━━●───── 03:50"
     ["{{ B-dot }}"]="•"
     ["{{ B-arrow }}"]="➣"
-    ["{{ B-dimond }}"]="◈"
+    ["{{ B-diamond }}"]="◈"
   )
 
   declare -A tags=(
