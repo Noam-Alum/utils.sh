@@ -36,7 +36,7 @@ function xecho {
     ["{{ BR-music }}"]="01:43 ━━━━●───── 03:50"
     ["{{ B-dot }}"]="•"
     ["{{ B-arrow }}"]="➣"
-    ["{{ B-dimond }}"]="◈"
+    ["{{ B-diamond }}"]="◈"
   )
   declare -A tags=(
     ["<b>"]="\\e[30m"
