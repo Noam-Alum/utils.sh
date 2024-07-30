@@ -180,7 +180,7 @@ Would change "[<span style="color: green;">yes</span>/<span style="color: red;">
 ## ![bash](https://raw.githubusercontent.com/rahul-jha98/README_icons/4d06112f039d3d302017842f696129642a58f6a5/language_and_tools/square/bash/bash-colored.svg) user_input
 
 **user_input** is a function meant to take user input in and save it as a variable<br>
-in the best way posable.
+in the best way possible.
 
 ### Types
 
