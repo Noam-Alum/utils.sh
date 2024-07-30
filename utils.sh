@@ -276,7 +276,7 @@ function ifcontinue {
 
 ## user_input
 # : **user_input** is a function meant to take user input in and save it as a variable
-# : in the best way posable.
+# : in the best way possible.
 # : 
 # : ## Types
 # : 
