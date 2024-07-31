@@ -525,7 +525,7 @@ function run {
   test $(wc -l <<< "$rn_cmd") -gt 1 && rn_cmd="$(parser b n 1 <<< "$rn_cmd") ... etc"
 
   uc_rn_after_err_msg="${uc_rn_err_msg//"{[ rn_err ]}"/"$rn_err"}"
-  uc_rn_after_err_msg="${uc_rn_err_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
+  uc_rn_after_err_msg="${uc_rn_after_err_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
   uc_rn_after_inf_msg="${uc_rn_inf_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
   if [ $rn_res -ne $rn_ec ]; then
     xecho "$uc_rn_after_err_msg"
