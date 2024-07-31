@@ -1,4 +1,5 @@
 #!/bin/bash
+# Written by: Noam Alum
 set +H
 function xecho {
   local content="$*"
