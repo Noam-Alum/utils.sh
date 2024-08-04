@@ -84,7 +84,7 @@ function xecho {
   for tag in "${!tags[@]}"; do
     content="${content//"$tag"/"${tags[$tag]}"}"
   done
-  content="$(echo "$content" | sed -E 's#</.{1,5}>#\\e[0m#g')"
+  content="$(echo "$content" | sed -E 's
   for sc in "${!shortcodes[@]}"; do
     content="${content//"$sc"/"${shortcodes[$sc]}"}"
   done
@@ -139,7 +139,7 @@ gen_random() {
   test -n "$uc_gr_len" && uc_gr_len=12
   gr_opt="$1"
   if [[ "$gr_opt" == "all" ]]; then
-    charset="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,'\"!@#$%^&*()-_=+|[]{};:/?.>"
+    charset="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,'\"!@
   else
     if [[ "$gr_opt" == "str" ]]; then
       charset="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
@@ -151,7 +151,7 @@ gen_random() {
   tr -dc "$charset" < /dev/urandom | head -c "$uc_gr_len"
 }
 function parser {
-  local pr_mode="$1" 
+  local pr_mode="$1"
   case $pr_mode in
     l)
       case $2 in
@@ -190,8 +190,10 @@ function run {
   uc_rn_after_inf_msg="${uc_rn_inf_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
   if [ $rn_res -ne $rn_ec ]; then
     xecho "$uc_rn_after_err_msg"
+    return 1
   elif [ "$rn_verbal" == "info" ]; then
     xecho "$uc_rn_after_inf_msg"
+    return 0
   fi
 }
 function easy_curl {

@@ -529,8 +529,10 @@ function run {
   uc_rn_after_inf_msg="${uc_rn_inf_msg//"{[ rn_cmd ]}"/"$rn_cmd"}"
   if [ $rn_res -ne $rn_ec ]; then
     xecho "$uc_rn_after_err_msg"
+    return 1
   elif [ "$rn_verbal" == "info" ]; then
     xecho "$uc_rn_after_inf_msg"
+    return 0
   fi
 }
 
