@@ -1,4 +1,5 @@
 #!/bin/bash
+# utils-min.sh - A collection of functions to make scripting in bash easier.
 # Written by: Noam Alum
 set +H
 function xecho {
@@ -84,7 +85,7 @@ function xecho {
   for tag in "${!tags[@]}"; do
     content="${content//"$tag"/"${tags[$tag]}"}"
   done
-  content="$(echo "$content" | sed -E 's
+  content="$(echo "$content" | sed -E 's#</.{1,5}>#\\e[0m#g')"
   for sc in "${!shortcodes[@]}"; do
     content="${content//"$sc"/"${shortcodes[$sc]}"}"
   done
@@ -139,7 +140,7 @@ gen_random() {
   test -n "$uc_gr_len" && uc_gr_len=12
   gr_opt="$1"
   if [[ "$gr_opt" == "all" ]]; then
-    charset="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,'\"!@
+    charset="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,'\"!@#$%^&*()-_=+|[]{};:/?.>"
   else
     if [[ "$gr_opt" == "str" ]]; then
       charset="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
