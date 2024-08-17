@@ -151,32 +151,6 @@ gen_random() {
   fi
   tr -dc "$charset" < /dev/urandom | head -c "$uc_gr_len"
 }
-function parser {
-  local pr_mode="$1"
-  case $pr_mode in
-    l)
-      case $2 in
-        c)
-          local pr_line_column="$3"
-          eval awk {\'print \$$pr_line_column\'}
-          ;;
-        b)
-          local pr_line_fw="$3"
-          local pr_line_sw="$4"
-          awk -v start="$pr_line_fw" -v end="$pr_line_sw" '$0 ~ start {flag=1; next} $0 ~ end {flag=0} flag'
-          ;;
-      esac
-      ;;
-    b)
-      case $2 in
-        n)
-          local pr_line_number="$3"
-          awk "NR == ${pr_line_number}"
-          ;;
-      esac
-      ;;
-  esac
-}
 function run {
   rn_ec=$1
   rn_verbal="$2"
@@ -196,35 +170,4 @@ function run {
     xecho "$uc_rn_after_inf_msg"
     return 0
   fi
-}
-function easy_curl {
-  ec_url="$3"
-  curl_v="$(curl -V | grep -o 'curl [0-9.]*' | cut -d' ' -f2 | tr -d '.')"
-  case $1 in
-    p)
-      case $2 in
-        type)
-          curl --max-time 3 -s -I -o /dev/null -w "%{content_type}" "$ec_url"
-          ;;
-        errmsg)
-          if [[ $curl_v -ge 7750 ]]; then
-            curl --max-time 3 -s -I -o /dev/null -w "%{errormsg}" "$ec_url"
-          else
-            "curl version does not support this feature (added in 7.75.0)."
-          fi
-          ;;
-        ec)
-          if [[ $curl_v -ge 7750 ]]; then
-            curl --max-time 3 -s -I -o /dev/null -w "%{exitcode}" "$ec_url"
-          else
-            curl --max-time 3 -s -I -o /dev/null "$ec_url"
-            echo "$?"
-          fi
-          ;;
-        hc)
-          curl --max-time 3 -s -I -o /dev/null -w "%{http_code}" "$ec_url"
-          ;;
-      esac
-      ;;
-  esac
 }
