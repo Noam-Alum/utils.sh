@@ -136,8 +136,8 @@ function user_input {
     read -p "$ui_promt" $ui_variable
   done
 }
-gen_random() {
-  test -n "$uc_gr_len" && uc_gr_len=12
+function gen_random {
+  test -z "$uc_gr_len" && uc_gr_len="12"
   gr_opt="$1"
   if [[ "$gr_opt" == "all" ]]; then
     charset="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,'\"!@#$%^&*()-_=+|[]{};:/?.>"
