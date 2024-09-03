@@ -1,6 +1,7 @@
 #!/bin/bash
 # utils-min.sh - A collection of functions to make scripting in bash easier.
 # Written by: Noam Alum
+# Documentation: https://docs.alum.sh/utils.sh/Introduction.html
 set +H
 declare -Ag shortcodes=(
   ["{{ ERROR }}"]="[\\e[31mERROR\\e[0m]"

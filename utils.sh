@@ -2,6 +2,7 @@
 # utils.sh - A collection of functions to make scripting in bash easier.
 #
 # Written by: Noam Alum
+# Documentation: https://docs.alum.sh/utils.sh/Introduction.html
 # 
 
 # Settings
