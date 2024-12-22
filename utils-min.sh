@@ -138,19 +138,34 @@ function user_input {
   done
 }
 function gen_random {
-  test -z "$uc_gr_len" && uc_gr_len="12"
-  gr_opt="$1"
-  if [[ "$gr_opt" == "all" ]]; then
-    charset="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,'\"!@#$%^&*()-_=+|[]{};:/?.>"
+  test -z "$1" && local GR_OPT="all" || local GR_OPT="$1"
+  test -z "$2" && local uc_gr_len="12" || local uc_gr_len="$2"
+  case $GR_OPT in
+    all)
+      local CHARSET="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,'\"!@#$%^&*()-_=+|[]{};:/?.>"
+      ;;
+    str)
+      local CHARSET="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+      ;;
+    int)
+      local CHARSET="0123456789"
+      ;;
+    *)
+      echo "Error while using \"$FUNCNAME\" function, not a valid option ($GR_OPT), refer to \"https://docs.alum.sh/utils.sh/functions/gen_random.html\" for more information." 2>&1
+      ;;
+  esac
+  readonly CHARSET
+  if [ -z "${uc_gr_len//[0-9]}" ]; then
+    local RES="$(tr -dc "$CHARSET" < /dev/urandom | head -c "$uc_gr_len")"
   else
-    if [[ "$gr_opt" == "str" ]]; then
-      charset="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-    fi
-    if [[ "$gr_opt" == "int" ]]; then
-      charset="0123456789"
-    fi
+     echo "Error while using \"$FUNCNAME\" function, length not an int ($uc_gr_len), refer to \"https://docs.alum.sh/utils.sh/functions/gen_random.html\" for more information." 2>&1
   fi
-  tr -dc "$charset" < /dev/urandom | head -c "$uc_gr_len"
+  if [ ! -z "$RES" ]; then
+          echo "$RES"
+          return 0
+  else
+          echo "Could not get results while using \"$FUNCNAME\" function, refer to \"https://docs.alum.sh/utils.sh/functions/gen_random.html\" for more information." 2>&1
+  fi
 }
 function run {
   rn_ec=$1
