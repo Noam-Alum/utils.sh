@@ -12,7 +12,7 @@ user_input dir txt "{{ B-dot }} File name : "
 
 # Check if user wants to download
 if [ $(ifcontinue "{{ B-dot }} Are you sure you want to continue?" ) -eq 0 ]; then
-  http_code=$(easy_curl p hc "$url")
+  http_code=$(curl -o /dev/null -w '%{http_code}' -Ls "$url")
   if [[ $http_code =~ (3|2) ]]; then
     xecho "{{ B-dot }} Dowbloading file from <y>{{ E-gun }}</y> - <bw>$url</bw>"
     run 0 "info" "curl -o \"$dir\" \"$url\""

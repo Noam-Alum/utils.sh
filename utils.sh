@@ -316,15 +316,15 @@ function user_input {
   ui_option="$2"
   shift 2
   ui_promt="$(xecho "$*")"
-  
-  case $ui_option in 
+
+  case $ui_option in
   mail)
     ui_arg="! -z \"\${!ui_variable}\" && \"\${!ui_variable}\" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
   ;;
   int*)
     ui_min="$(awk {'print $2'} <<< "$ui_option")"
     ui_max="$(awk {'print $3'} <<< "$ui_option")"
-    ui_arg="! -z \"\${!ui_variable}\" && \"\${!ui_variable}\" =~ ^[0-9]+$ $(test ! -z $ui_min && test ! -z $ui_max && echo "&& \${!ui_variable} -ge $ui_min && \${!ui_variable} -le $ui_max")"
+    ui_arg="! -z \"\${!ui_variable}\" && \"\${!ui_variable}\" =~ ^[0-9]+$ && \${!ui_variable} -ge $ui_min && \${!ui_variable} -le $ui_max"
   ;;
   opt*)
     options="^($(tr -s ' ' '|' <<< $(cut -d' ' -f2- <<< "$ui_option")))$"
@@ -337,7 +337,7 @@ function user_input {
     ui_arg="! -z \"\${!ui_variable}\""
   ;;
   esac
-  
+
   until eval "[[ $ui_arg ]]"; do
     read -p "$ui_promt" $ui_variable
   done
@@ -394,18 +394,18 @@ function gen_random {
   fi
 
   if [ ! -z "$RES" ]; then
-          echo "$RES"
-          return 0
+      echo "$RES"
+      return 0
   else
-          echo "Could not get results while using \"$FUNCNAME\" function, refer to \"https://docs.alum.sh/utils.sh/functions/gen_random.html\" for more information." 2>&1
+      echo "Could not get results while using \"$FUNCNAME\" function, refer to \"https://docs.alum.sh/utils.sh/functions/gen_random.html\" for more information." 2>&1
   fi
 }
 
 ## run - run commands in an informative way
-# : 
+# :
 # : The **run** function is intended to execute commands with both informative clarity
 # : and stylish presentation.
-# : 
+# :
 # : **Usage:**
 # : ```bash
 # : run <wanted-exit-code> "<info/notinfo>" "<cmd>"
@@ -419,13 +419,13 @@ function gen_random {
 # :   [INFO] Executed  cat exists.txt  successfully ✔.<br>
 # :   If I used *noinfo* nothig would have been returned.
 # : - `<cmd>`: The command you want to execute.
-# : 
+# :
 # : **For example:**
 # : ```
-# : run 0 "info" cat does-not-exists.txt 
+# : run 0 "info" cat does-not-exists.txt
 # : ```
 # : Would return:
-# : 
+# :
 # : [ERROR] Error while executing  cat does-not-exists.txt  ಠ_ರೃ
 # : ✦•┈๑⋅⋯ ⋯⋅๑┈•✦
 # :    Error:
@@ -451,7 +451,7 @@ function gen_random {
 # :   ➣ Smoothly executed {[ rn_cmd ]} ʘ‿ʘ
 # :   ```
 # :   {[ rn_cmd ]} being the command you've executed.
-# :   
+# : 
 # : - **uc_rn_err_msg:** Change the error message stracture.<br>
 # :   ```bash
 # :   uc_rn_err_msg="{{ B-arrow }} Ops! error while executing {[ rn_cmd ]} {{ E-sad }}\n{[ rn_err ]}"
