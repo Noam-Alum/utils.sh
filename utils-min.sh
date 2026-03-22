@@ -58,7 +58,7 @@ ui_arg="! -z \"\${!ui_variable}\""
 ;;
 esac
 until eval "[[ $ui_arg ]]"; do
-read -p "$ui_promt" $ui_variable
+read -e -p "$ui_promt" $ui_variable
 done
 }
 function gen_random {
