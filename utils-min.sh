@@ -118,15 +118,24 @@ function params {
   read -r -a raw <<< "$1"
   shift
 
-  local EXPECTED_COUNT=${#raw[@]}
   local values=("$@")
+
+  local REQUIRED_COUNT=0
+  local TOTAL_COUNT=${#raw[@]}
 
   local PARAMS_STR=""
   local PARAMS_GOT=""
   local PARAMS_MAP=""
 
-  for ((i=0; i<EXPECTED_COUNT; i++)); do
+  for ((i=0; i<TOTAL_COUNT; i++)); do
     local token="${raw[$i]}"
+
+    # detect optional
+    local optional=0
+    if [[ "$token" == \?* ]]; then
+      optional=1
+      token="${token#\?}"
+    fi
 
     # extract name and type
     local name="${token%%<*}"
@@ -135,12 +144,26 @@ function params {
 
     local value="${values[$i]}"
 
-    # assign variable (only name)
+    # count required only
+    if [[ $optional -eq 0 ]]; then
+      ((REQUIRED_COUNT++))
+      if [[ -z "$value" ]]; then
+        echo "echo 'ERROR: Missing required parameter: $name <$type>' >&2"
+        echo "return 1"
+        return
+      fi
+    fi
+
+    # assign variable
     printf -v _assign '%q' "$value"
     echo "local $name=$_assign"
 
-    # build PARAMETERS string (with type)
-    PARAMS_STR+="$name <$type>, "
+    # build PARAMETERS string
+    if [[ $optional -eq 1 ]]; then
+      PARAMS_STR+="?$name <$type>, "
+    else
+      PARAMS_STR+="$name <$type>, "
+    fi
 
     # pretty value
     if [[ -z $value ]]; then
@@ -149,14 +172,11 @@ function params {
       printf -v _val '%q' "$value"
     fi
 
-    # full got list
     PARAMS_GOT+="$_val "
-
-    # mapping
     PARAMS_MAP+="$name=$_val "
   done
 
-  echo "local PARAMS_COUNT=$EXPECTED_COUNT"
+  echo "local PARAMS_COUNT=$REQUIRED_COUNT"
   echo "local PARAMETERS=\"${PARAMS_STR%, }\""
   echo "local PARAMS_GOT=\"${PARAMS_GOT% }\""
   echo "local PARAMS_MAP=\"${PARAMS_MAP% }\""
