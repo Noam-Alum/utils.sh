@@ -136,7 +136,8 @@ function params {
     local value="${values[$i]}"
 
     # assign variable (only name)
-    echo "local $name=\${values[$i]}"
+    printf -v _assign '%q' "$value"
+    echo "local $name=$_assign"
 
     # build PARAMETERS string (with type)
     PARAMS_STR+="$name <$type>, "
