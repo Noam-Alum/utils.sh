@@ -112,3 +112,51 @@ xecho "$uc_rn_after_inf_msg"
 return 0
 fi
 }
+function params {
+  # split input into tokens
+  local raw
+  read -r -a raw <<< "$1"
+  shift
+
+  local EXPECTED_COUNT=${#raw[@]}
+  local values=("$@")
+
+  local PARAMS_STR=""
+  local PARAMS_GOT=""
+  local PARAMS_MAP=""
+
+  for ((i=0; i<EXPECTED_COUNT; i++)); do
+    local token="${raw[$i]}"
+
+    # extract name and type
+    local name="${token%%<*}"
+    local type="${token#*<}"
+    type="${type%>}"
+
+    local value="${values[$i]}"
+
+    # assign variable (only name)
+    echo "local $name=\${values[$i]}"
+
+    # build PARAMETERS string (with type)
+    PARAMS_STR+="$name <$type>, "
+
+    # pretty value
+    if [[ -z $value ]]; then
+      _val="''"
+    else
+      printf -v _val '%q' "$value"
+    fi
+
+    # full got list
+    PARAMS_GOT+="$_val "
+
+    # mapping
+    PARAMS_MAP+="$name=$_val "
+  done
+
+  echo "local PARAMS_COUNT=$EXPECTED_COUNT"
+  echo "local PARAMETERS=\"${PARAMS_STR%, }\""
+  echo "local PARAMS_GOT=\"${PARAMS_GOT% }\""
+  echo "local PARAMS_MAP=\"${PARAMS_MAP% }\""
+}
