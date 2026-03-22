@@ -147,11 +147,6 @@ function params {
     # count required only
     if [[ $optional -eq 0 ]]; then
       ((REQUIRED_COUNT++))
-      if [[ -z "$value" ]]; then
-        echo "echo 'ERROR: Missing required parameter: $name <$type>' >&2"
-        echo "return 1"
-        return
-      fi
     fi
 
     # assign variable
