@@ -486,15 +486,13 @@ function run {
   fi
 }
 
-
 function params {
-  # split definition into tokens
+  # split input into tokens
   local raw
   read -r -a raw <<< "$1"
   shift
 
   local values=("$@")
-  local value_index=0
 
   local REQUIRED_COUNT=0
   local TOTAL_COUNT=${#raw[@]}
@@ -518,22 +516,11 @@ function params {
     local type="${token#*<}"
     type="${type%>}"
 
-    local value=""
+    local value="${values[$i]}"
 
-    if [[ -n "${values[$value_index]}" ]]; then
-      value="${values[$value_index]}"
-      ((value_index++))
-    elif [[ -n "${!name}" ]]; then
-      value="${!name}"
-    else
-      value=""
-    fi
-
-    # count required only if not satisfied
+    # count required only
     if [[ $optional -eq 0 ]]; then
-      if [[ -z "$value" ]]; then
-        ((REQUIRED_COUNT++))
-      fi
+      ((REQUIRED_COUNT++))
     fi
 
     # assign variable
