@@ -3,7 +3,7 @@
 #
 # Written by: Noam Alum
 # Documentation: https://docs.alum.sh/utils.sh/Introduction.html
-# 
+#
 
 # Settings
 set +H
@@ -92,7 +92,7 @@ declare -Ag tags=(
 )
 
 # Utils
-# 
+#
 # You can place **uc_** variables in the head of your script to configure utils functions for your liking.
 # Each function description includes its **uc_** variables.
 #
@@ -101,7 +101,7 @@ declare -Ag tags=(
 # | uc_ifc_posfix    | ifcontinue   | Change default posfix (*[yes/no]*).   |
 # | uc_gr_len        | gen_random   | Change default length (*12*).         |
 # | uc_rn_err_msg    | run          | Change the structure of the error msg.|
-# | uc_rn_inf_msg    | run          | Change the structure of the info msg. | 
+# | uc_rn_inf_msg    | run          | Change the structure of the info msg. |
 #
 # If a uc_ variable has dynamically changing parts, you'd have to use **placeholders**, placeholders are
 # called using {[ name ]}:
@@ -114,7 +114,7 @@ declare -Ag tags=(
 ## xecho - Extended echo
 # :  **xecho** is a utility designed to facilitate color usage output,
 # :  offering a variety of shortcodes for easy integration into your text.
-# :  
+# :
 # :  ## ShortCodes:
 # :  | ShortCode            | Result                          |
 # :  | -------------------- | ------------------------------- |
@@ -157,7 +157,7 @@ declare -Ag tags=(
 # :  | {{ B-dot }}          | •                               |
 # :  | {{ B-arrow }}        | ➣                               |
 # :  | {{ B-diamond }}       | ◈                               |
-# :  
+# :
 # :  ## Tags:
 # :  | Color                                 | Tag        | Example                 |
 # :  |---------------------------------------|------------|-------------------------|
@@ -245,9 +245,9 @@ function xecho {
 # : **Results:**
 # : • Do you want to go do something? [yes/no] : yes
 # : Good - ʘ‿ʘ
-# : 
+# :
 # : ## uc variables:
-# : 
+# :
 # : `uc_ifc_posfix` - Change default posfix (*[yes/no]*).
 # :   For example:
 # :   ```bash
@@ -280,9 +280,9 @@ function ifcontinue {
 ## user_input
 # : **user_input** is a function meant to take user input in and save it as a variable
 # : in the best way possible.
-# : 
+# :
 # : ## Types
-# : 
+# :
 # : - **mail:** validates a mail address.
 # :      ```bash
 # :      user_input mail "mail" "What is your mail address?"
@@ -357,9 +357,9 @@ function user_input {
 # : ```
 # : **Would return:**<br>
 # : 36261766974132
-# : 
+# :
 # : ## uc variables:
-# : 
+# :
 # : `uc_gr_len` - Change default length (*12*).
 # :   For example:
 # :   ```bash
@@ -451,7 +451,7 @@ function gen_random {
 # :   ➣ Smoothly executed {[ rn_cmd ]} ʘ‿ʘ
 # :   ```
 # :   {[ rn_cmd ]} being the command you've executed.
-# : 
+# :
 # : - **uc_rn_err_msg:** Change the error message stracture.<br>
 # :   ```bash
 # :   uc_rn_err_msg="{{ B-arrow }} Ops! error while executing {[ rn_cmd ]} {{ E-sad }}\n{[ rn_err ]}"
